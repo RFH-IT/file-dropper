@@ -7,7 +7,7 @@
 
   <!-- ─── Basic identity ─── -->
   <Id>f7d3a2b1-c4e5-4a89-9b6d-8e2f1c3a5d7b</Id>
-  <Version>1.0.0.0</Version>
+  <Version>1.0.1.0</Version>
   <ProviderName>Logicfold</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="Azure File Attacher"/>
@@ -19,7 +19,7 @@
   <!-- ─── Host requirements ─── -->
   <Requirements>
     <Sets>
-      <Set Name="Mailbox" MinVersion="1.8"/>
+      <Set Name="Mailbox" MinVersion="1.5"/>
     </Sets>
   </Requirements>
 
@@ -43,7 +43,7 @@
   <VersionOverrides xmlns="http://schemas.microsoft.com/office/mailappversionoverrides"
                     xsi:type="VersionOverridesV1_0">
     <Requirements>
-      <bt:Sets DefaultMinVersion="1.8">
+      <bt:Sets DefaultMinVersion="1.5">
         <bt:Set Name="Mailbox"/>
       </bt:Sets>
     </Requirements>
