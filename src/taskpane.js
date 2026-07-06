@@ -39,7 +39,7 @@ var canAttachBase64 = false; // set true only if req set 1.8 API exists
 // number, the new taskpane.js is live; an older number or nothing = cached/old.
 // (This is the JS build version; the manifest <Version> only changes when the
 // manifest itself does and the admin re-uploads it.)
-var ADDIN_VERSION = '1.0.4';
+var ADDIN_VERSION = '1.0.5';
 
 /* --- Office.js Initialization -------------------------------- */
 Office.onReady(function (info) {
@@ -166,16 +166,28 @@ function handleDrop(e) {
 
     // 1a. Obfuscated gateway blob (the normal Salesforce path). It is NOT an http
     //     URL on the clipboard — so casually dragging it into a browser does nothing.
-    //     Decode it back to "<url>|<filename>" and attach. (Key is public; this is
-    //     anti-accident obfuscation, not security.)
+    //     Decode it back to one or more "<url>|<filename>" lines and attach each.
+    //     A single-file drag yields one line; a multi-select drag yields many
+    //     (one per file, newline-separated). (Key is public; this is anti-accident
+    //     obfuscation, not security.)
     if (plainText && plainText.indexOf('http') !== 0 && !firstUrl(uriList)) {
         var decoded = unscrambleLink(trim(plainText));
         if (decoded && decoded.indexOf('http') === 0) {
-            var sep = decoded.indexOf('|');
-            var dUrl = sep > -1 ? decoded.substring(0, sep) : decoded;
-            var dName = sep > -1 ? decoded.substring(sep + 1) : '';
-            handleDroppedUrl(dUrl, dName);
-            return;
+            var lines = decoded.split(/[\r\n]+/);
+            var attached = 0;
+            for (var li = 0; li < lines.length; li++) {
+                var entry = trim(lines[li]);
+                if (!entry || entry.indexOf('http') !== 0) { continue; }
+                var sep = entry.indexOf('|');
+                var dUrl = sep > -1 ? entry.substring(0, sep) : entry;
+                var dName = sep > -1 ? entry.substring(sep + 1) : '';
+                handleDroppedUrl(dUrl, dName);
+                attached++;
+            }
+            if (attached > 0) {
+                if (attached > 1) { setStatus('Attaching ' + attached + ' files...'); }
+                return;
+            }
         }
     }
 
